@@ -1,0 +1,23 @@
+{
+    "devices": {
+      "knob_device": "/dev/input/by-id/usb-8808_6613-if02-event-kbd",
+      "buttons_device": "/dev/input/by-id/usb-8808_6613-event-kbd"
+    },
+    "default_seek_step": 0.5,
+    "key_mappings": {
+      "seek_forward": "KEY_VOLUMEUP",
+      "seek_backward": "KEY_VOLUMEDOWN",
+      "toggle_pause": "KEY_PLAYPAUSE",
+      "decrease_seek_step": "KEY_1",
+      "increase_seek_step": "KEY_2",
+      "set_marker": "KEY_3",
+      "play_marker": "KEY_4"
+    },
+    "filem_ext_filters": "AVI,avi,mp4",
+    "filem_show_hidden": "False",
+    "filem_start_path": "/",
+    "mpv_xinit": "False",
+    "mpv_full_screen": "True",
+    "mpv_fs_screen": "0",
+    "mpv_socket": "/tmp/mpv-socket"
+}
