@@ -83,7 +83,10 @@ SeeKnob is customizable via a `config.json` file. Below is an example:
       "decrease_seek_step": "KEY_1",
       "increase_seek_step": "KEY_2",
       "set_marker": "KEY_3",
-      "play_marker": "KEY_4"
+      "play_marker": "KEY_4",
+      "nav_up": "KEY_VOLUMEDOWN",
+      "nav_down": "KEY_VOLUMEUP",
+      "nav_select": "KEY_PLAYPAUSE"
     },
     "filem_ext_filters": "AVI,avi,mp4",
     "filem_show_hidden": "False",
