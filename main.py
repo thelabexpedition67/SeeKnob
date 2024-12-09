@@ -45,11 +45,19 @@ def main():
 
     def on_quit():
         """Handle quitting the application."""
+        debug.log("Quitting the application.")
+        stop_event.set()  # Signal threads to stop
         mpv_manager.quit_mpv()  # Quit MPV if running
-        stop_event.set()  # Stop input threads
-        debug.log("Goodbye!")
-        raise urwid.ExitMainLoop()
-
+        try:
+            raise urwid.ExitMainLoop()  # Exit Urwid main loop cleanly
+        except urwid.ExitMainLoop:
+            debug.log("Urwid MainLoop exited cleanly.")
+        finally:
+            os.system('reset')  # Ensures terminal is fully reset
+            debug.log("Terminal reset and cleared.")
+            # Force exit
+            os._exit(0)
+        
     def on_help():
         """Show the Help page."""
         help_page = HelpPage(on_exit_callback=switch_to_menu)
@@ -61,8 +69,14 @@ def main():
         Displays the VideoPlayingPage and starts MPV playback.
         """
         if selected_file:
+            # Load markers for the video file
+            input_handler.load_markers(selected_file)
+
+            # Start MPV player
             mpv_manager.video_file = selected_file
             mpv_manager.start_mpv()
+
+            # Show the VideoPlayingPage
             video_page = VideoPlayingPage(mpv_manager, on_exit_callback=switch_to_menu)
             loop.widget = video_page
             loop.screen.clear()

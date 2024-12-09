@@ -4,8 +4,6 @@ SeeKnob is a powerful and precise media control tool that transforms your rotary
 
 SeeKnob works only on Linux (at the moment) and allows you to control video playback effortlessly, set marker points, and fine-tune seek precision. Whether you're a media enthusiast, developer, or tinkerer, SeeKnob offers unmatched control over your media.
 
----
-
 ## Features
 
 - **File Browser**: Browse your filesystem and select video files.
@@ -16,8 +14,6 @@ SeeKnob works only on Linux (at the moment) and allows you to control video play
 - **MPV Integration**: Seamlessly control video playback using MPV.
 - **Cross-Monitor Fullscreen**: Choose which screen MPV launches on.
 - **Lightweight and Fast**: Runs smoothly even on non-GUI systems.
-
----
 
 ## Installation
 
@@ -65,28 +61,32 @@ Follow these steps to install MPV based on your operating system:
   ```bash
   chmod +x run.sh
   ```
+
 ## Configuration
 
-SeeKnob is customizable via a `config.json` file. Below is an example:
+SeeKnob is highly customizable via a `config.json` file. Below is an example configuration:
 
 ```json
 {
     "devices": {
-      "knob_device": "/dev/input/by-id/usb-8808_6613-if02-event-kbd",
-      "buttons_device": "/dev/input/by-id/usb-8808_6613-event-kbd"
+        "knob_device": "/dev/input/by-id/usb-8808_6613-if02-event-kbd",
+        "buttons_device": "/dev/input/by-id/usb-8808_6613-event-kbd"
     },
     "default_seek_step": 0.5,
+    "marker_persistence": "True",
+    "marker_storage_folder": "./markers",
     "key_mappings": {
-      "seek_forward": "KEY_VOLUMEUP",
-      "seek_backward": "KEY_VOLUMEDOWN",
-      "toggle_pause": "KEY_PLAYPAUSE",
-      "decrease_seek_step": "KEY_1",
-      "increase_seek_step": "KEY_2",
-      "set_marker": "KEY_3",
-      "play_marker": "KEY_4",
-      "nav_up": "KEY_VOLUMEDOWN",
-      "nav_down": "KEY_VOLUMEUP",
-      "nav_select": "KEY_PLAYPAUSE"
+        "seek_forward": "knob_device.KEY_VOLUMEUP",
+        "seek_backward": "knob_device.KEY_VOLUMEDOWN",
+        "toggle_pause": "knob_device.KEY_PLAYPAUSE",
+        "decrease_seek_step": "buttons_device.KEY_1",
+        "increase_seek_step": "buttons_device.KEY_2",
+        "set_marker_1": "buttons_device.KEY_3",
+        "play_marker_1": "buttons_device.KEY_4",
+        "nav_up": "knob_device.KEY_VOLUMEDOWN",
+        "nav_down": "knob_device.KEY_VOLUMEUP",
+        "nav_select": "knob_device.KEY_PLAYPAUSE",
+        "nav_quit": "buttons_device.KEY_1"
     },
     "filem_ext_filters": "AVI,avi,mp4",
     "filem_show_hidden": "False",
@@ -99,14 +99,45 @@ SeeKnob is customizable via a `config.json` file. Below is an example:
 
 ### Key Configuration Options:
 
-- **devices**: Paths for your knob and button devices (use `/dev/input/by-id/` for stability).
-- **default_seek_step**: Initial seek step size in seconds.
-- **key_mappings**: Map physical keys to actions like seeking and toggling pause.
-- **filem_ext_filters**: Allowed video file extensions.
-- **mpv_full_screen**: Launch MPV in fullscreen.
-- **mpv_fs_screen**: Specify the monitor index for fullscreen playback.
+- **devices**: 
+   - Map your physical input devices (knob and buttons). Use paths from `/dev/input/by-id/` for stability.
 
----
+- **default_seek_step**: 
+   - The default time in seconds to seek forward/backward during video playback.
+
+- **marker_persistence**:
+   - Set to `True` to persist marker points between sessions.
+
+- **marker_storage_folder**: 
+   - Directory where marker files are stored, hashed by video content.
+
+- **key_mappings**:
+   - Dynamically map key events to actions using the following format: `<device_name>.<keycode>`.
+   - Example mappings include:
+       - **seek_forward**: Move forward in the video (`KEY_VOLUMEUP`).
+       - **seek_backward**: Move backward in the video (`KEY_VOLUMEDOWN`).
+       - **set_marker_X**: Save a marker point.
+       - **play_marker_X**: Replay a saved marker.
+       - **nav_up/nav_down/nav_select**: Navigate menus with knob controls.
+       - **nav_quit**: Exit or trigger quit action.
+
+- **filem_ext_filters**: 
+   - A comma-separated list of video file extensions to display in the file browser.
+
+- **filem_show_hidden**: 
+   - Set to `True` to include hidden files in the file browser.
+
+- **filem_start_path**: 
+   - The default directory where the file browser starts.
+
+- **mpv_full_screen**: 
+   - Set `True` to launch videos in fullscreen mode.
+
+- **mpv_fs_screen**: 
+   - Specify the monitor index for fullscreen playback (e.g., `0` for the primary monitor).
+
+- **mpv_socket**: 
+   - Path to MPV's IPC socket for controlling playback.
 
 ## Blocking System from Managing USB Devices
 
@@ -140,8 +171,6 @@ If your knob or buttons are being managed by the system (e.g., adjusting volume)
 
 5. **Verify**: Ensure the system no longer manages the device.
 
----
-
 ## Usage
 
 1. **Run the Application**:
@@ -163,10 +192,6 @@ If your knob or buttons are being managed by the system (e.g., adjusting volume)
    - Buttons for increasing/decreasing seek step and managing marker points.
    - To exit from the video player, just press 'q'
 
----
-
 ## License
 
 This project is licensed under the MIT License.
-
----
