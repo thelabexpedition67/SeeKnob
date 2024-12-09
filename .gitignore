@@ -5,3 +5,6 @@
 .DS_Store
 Thumbs.db
 __pycache__
+
+# Ignore Folders
+venv

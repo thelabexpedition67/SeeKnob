@@ -12,14 +12,15 @@ class AboutPage(urwid.WidgetWrap):
         self.on_exit_callback = on_exit_callback
 
         # Header text
-        header = urwid.Text("About SeeKnob", align='center')
+        header = urwid.Text("SeeKnob", align='center')
         header = urwid.AttrMap(header, 'header')
 
         # Body content
         about_text = (
-            "=== SeeKnob ===\n"
-            "The Ultimate Knob-Based Media Controller\n\n"
-            "Developed by TheLabExpedition67\n\n"
+            "\n"
+            "A simple Knob-Based Media Controller\n\n"
+            "Created by TheLabExpedition67\nGitHub: https://github.com/TheLabExpedition67\n"
+            "Website: http://thelabexpedition67.com/\n\n"
             "SeeKnob transforms your rotary knob into a precise media control tool,\n"
             "making video navigation seamless and efficient.\n\n"
             "Features:\n"
@@ -31,7 +32,7 @@ class AboutPage(urwid.WidgetWrap):
             "Press 'Esc' or 'q' to return to the main menu."
         )
 
-        body = urwid.Text(about_text, align='left')
+        body = urwid.Text(about_text, align='center')
 
         # Footer
         footer = urwid.Text("Press 'Esc' or 'q' to go back.", align='center')

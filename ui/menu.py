@@ -10,40 +10,37 @@ class MenuItem(urwid.Button):
 
 def menu_button(label, on_press_callback):
     """Helper to create MenuItem."""
-    return MenuItem(label, on_press_callback)
+    return urwid.AttrMap(MenuItem(label, on_press_callback), None, focus_map='focus')
 
-class Menu:
-    def __init__(self, on_select_file, on_help, on_about, on_quit):
-        """
-        Initialize the main menu.
-
-        :param on_select_file: Callback for Select File option.
-        :param on_help: Callback for Help option.
-        :param on_about: Callback for About option.
-        :param on_quit: Callback for Quit option.
-        """
+class Menu(urwid.WidgetWrap):
+    def __init__(self, on_select_file, on_help, on_about, on_quit, mpv_manager):
         self.on_select_file = on_select_file
         self.on_help = on_help
         self.on_about = on_about
         self.on_quit = on_quit
+        self.mpv_manager = mpv_manager
 
-        # Menu buttons with callbacks
-        select_file_btn = menu_button("Select File From Filesystem", lambda button: self.on_select_file())
-        help_btn = menu_button("Help", lambda button: self.on_help())
-        about_btn = menu_button("About", lambda button: self.on_about())
-        quit_btn = menu_button("Quit", lambda button: self.on_quit())
+        menu_items = [
+            menu_button("Select File From Filesystem", lambda _: self.on_select_file()),
+            menu_button("Help", lambda _: self.on_help()),
+            menu_button("About", lambda _: self.on_about()),
+            menu_button("Quit", lambda _: self.on_quit())
+        ]
 
-        # List of menu items
-        menu_items = [select_file_btn, help_btn, about_btn, quit_btn]
-
-        # Menu layout
         self.list_walker = urwid.SimpleFocusListWalker(menu_items)
         menu_listbox = urwid.ListBox(self.list_walker)
-        footer_text = urwid.Text("SeeKnob - TheLabExpedition67", align='right')
-        self.view = urwid.LineBox(
-            urwid.Frame(menu_listbox, footer=footer_text), title="Main Menu"
-        )
+        footer_text = urwid.Text("SeekKnob - TheLabExpedition67", align='right')
+        main_frame = urwid.Frame(menu_listbox, footer=footer_text)
+        menu_box = urwid.LineBox(main_frame, title="Main Menu")
 
-    def widget(self):
-        """Return the main menu widget."""
-        return self.view
+        super().__init__(menu_box)
+
+    def keypress(self, size, key):
+        if key in ('q', 'Q'):
+            if self.mpv_manager.is_running():
+                self.mpv_manager.quit_mpv()
+                debug.log("MPV closed via 'q'.")
+            else:
+                debug.log("MPV is not running.")
+            return None  # Key handled
+        return super().keypress(size, key)

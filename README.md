@@ -45,16 +45,26 @@ Follow these steps to install MPV based on your operating system:
   sudo pacman -S mpv
   ```
 
-### Install Python Libraries
+### Installation
 
-Run the following commands to install required Python libraries:
-
-```bash
-pip install evdev urwid
-```
-
----
-
+1. **Clone the Repository**:
+  ```bash
+  git clone https://github.com/thelabexpedition67/SeeKnob.git
+  cd SeeKnob
+  ```
+2. **Create a Virtual Environment (Recommended)**:
+  ```bash
+  python3 -m venv venv
+  source venv/bin/activate
+  ```
+3. **Install Dependencies**:
+  ```bash
+  pip install -r requirements.txt
+  ```
+4. **Set permissions**:
+  ```bash
+  chmod +x run.sh
+  ```
 ## Configuration
 
 SeeKnob is customizable via a `config.json` file. Below is an example:
@@ -78,7 +88,6 @@ SeeKnob is customizable via a `config.json` file. Below is an example:
     "filem_ext_filters": "AVI,avi,mp4",
     "filem_show_hidden": "False",
     "filem_start_path": "/",
-    "mpv_xinit": "False",
     "mpv_full_screen": "True",
     "mpv_fs_screen": "0",
     "mpv_socket": "/tmp/mpv-socket"
@@ -91,7 +100,6 @@ SeeKnob is customizable via a `config.json` file. Below is an example:
 - **default_seek_step**: Initial seek step size in seconds.
 - **key_mappings**: Map physical keys to actions like seeking and toggling pause.
 - **filem_ext_filters**: Allowed video file extensions.
-- **mpv_xinit**: Set to `True` for non-GUI environments.
 - **mpv_full_screen**: Launch MPV in fullscreen.
 - **mpv_fs_screen**: Specify the monitor index for fullscreen playback.
 
@@ -135,7 +143,12 @@ If your knob or buttons are being managed by the system (e.g., adjusting volume)
 
 1. **Run the Application**:
    ```bash
+   source venv/bin/activate
    python3 main.py
+   ```
+   or
+   ```bash
+   ./run.sh
    ```
 2. Use the **Menu** to:
    - Select files from the filesystem.
@@ -145,17 +158,12 @@ If your knob or buttons are being managed by the system (e.g., adjusting volume)
 3. **Controls**:
    - Use the knob to seek forward/backward.
    - Buttons for increasing/decreasing seek step and managing marker points.
+   - To exit from the video player, just press 'q'
 
 ---
 
 ## License
 
 This project is licensed under the MIT License.
-
----
-
-## Contact
-
-For feedback or support, contact **TheLabExpedition67** via GitHub or open an issue.
 
 ---

@@ -13,17 +13,14 @@ from config.loader import load_config
 from ui.help_page import HelpPage  # Import the HelpPage class
 from debug_logger import Debug
 
-
 stop_event = threading.Event()
 debug = Debug()  # Initialize Debug logger
-
 
 def main():
     config = load_config("config.json")
     mpv_manager = MPVManager(
         video_file=None,
         socket_path=config["mpv_socket"],
-        xinit=config["mpv_xinit"].lower() == "true",
         full_screen=config["mpv_full_screen"].lower() == "true",
         fs_screen=int(config.get("mpv_fs_screen", "0"))  # Convert screen index to integer
     )
@@ -38,7 +35,7 @@ def main():
         # Remove any print statements if possible
         background = urwid.SolidFill(' ')
         combined = urwid.Overlay(
-            menu.widget(),
+            menu,
             background,
             align='center', width=('relative', 100),
             valign='middle', height=('relative', 100)
@@ -65,7 +62,10 @@ def main():
         loop.widget = about_page
 
     def on_quit():
-        # Quit cleanly
+        """Handle quitting the application."""
+        # Check if MPV is running and close it first
+        mpv_manager.quit_mpv()
+        # Stop input handling threads
         stop_event.set()
         knob_thread.join()
         button_thread.join()
@@ -74,7 +74,7 @@ def main():
 
     def on_file_selected(selected_file):
         """Handle file selection: start MPV and return to the menu."""
-        loop.widget = menu.widget()  # Return to the menu widget
+        loop.widget = menu  # Return to the menu
         if selected_file:
             mpv_manager.video_file = selected_file
             mpv_manager.start_mpv()
@@ -87,7 +87,7 @@ def main():
 
     def on_browser_exit():
         # Return to menu without selecting a file
-        loop.widget = menu.widget()
+        loop.widget = menu
 
     def on_help():
         """Show the Help page."""
@@ -95,7 +95,7 @@ def main():
         loop.widget = help_page  # Switch to the Help Page
 
     # Initialize menu and folder browser
-    menu = Menu(on_select_file, on_help, on_about, on_quit)
+    menu = Menu(on_select_file, on_help, on_about, on_quit, mpv_manager=mpv_manager)
     folder_browser = FolderBrowser(
         start_dir=config["filem_start_path"],
         ext_filters=config["filem_ext_filters"].split(","),
@@ -113,7 +113,7 @@ def main():
 
     # Run a single main loop
     global loop
-    loop = urwid.MainLoop(menu.widget(), palette=palette)
+    loop = urwid.MainLoop(menu, palette=palette)
     loop.run()
 
 if __name__ == "__main__":

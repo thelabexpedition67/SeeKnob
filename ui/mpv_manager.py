@@ -7,26 +7,27 @@ from debug_logger import Debug
 debug = Debug()  # Initialize Debug logger
 
 class MPVManager:
-    def __init__(self, video_file, socket_path, xinit, full_screen, fs_screen):
+    def __init__(self, video_file, socket_path, full_screen, fs_screen):
         """
         MPV Manager to handle video playback.
         :param video_file: Path to the video file.
         :param socket_path: Path for the MPV IPC socket.
-        :param xinit: Whether to use xinit for non-desktop environments.
         :param full_screen: Whether to launch MPV in fullscreen mode.
         """
         self.video_file = video_file
         self.socket_path = socket_path
-        self.xinit = xinit
         self.full_screen = full_screen  # Initialize full_screen attribute
         self.fs_screen = fs_screen  # New parameter for screen selection
         self.process = None
 
     def start_mpv(self):
-        """Start MPV with or without xinit."""
+        """Start MPV"""
         if not self.video_file:
             debug.log("No video file selected.")
             return
+
+        if self.is_running():  # Check if MPV is already running
+            self.quit_mpv()
 
         mpv_command = [
             "mpv",
@@ -46,22 +47,11 @@ class MPVManager:
         debug.log(f"Launching MPV: {' '.join(mpv_command)}")
 
         try:
-            # Redirect stdout and stderr to prevent terminal interference
-            if self.xinit:
-                full_command = ["xinit", "--"] + mpv_command
-                debug.log(f"Starting MPV with xinit: {' '.join(full_command)}")
-                self.process = subprocess.Popen(
-                    full_command,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
-                )
-            else:
-                self.process = subprocess.Popen(
-                    mpv_command,
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
-                )
-
+            self.process = subprocess.Popen(
+                mpv_command,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
         except Exception as e:
             debug.log_exception(e)
 
@@ -72,7 +62,7 @@ class MPVManager:
                 client.connect(self.socket_path)
                 client.sendall((json.dumps(command) + "\n").encode("utf-8"))
         except Exception as e:
-            debug.log_exception(e)
+            debug.log_exception(e)            
 
     def show_message(self, message, duration=2000):
         """Show a message on MPV."""
@@ -98,3 +88,16 @@ class MPVManager:
         except Exception as e:
             debug.log_exception(e)
             return 0
+
+    def is_running(self):
+        """Check if the MPV process is running."""
+        return self.process and self.process.poll() is None
+
+    def quit_mpv(self):
+        """Send the 'quit' command to MPV via IPC socket."""
+        if self.is_running():  # Check if MPV is running
+            try:
+                self.send_command({"command": ["quit"]})
+                debug.log("Sent 'quit' command to MPV.")
+            except Exception as e:
+                debug.log_exception(e)

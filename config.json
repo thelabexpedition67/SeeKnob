@@ -16,7 +16,6 @@
     "filem_ext_filters": "AVI,avi,mp4",
     "filem_show_hidden": "False",
     "filem_start_path": "/",
-    "mpv_xinit": "False",
     "mpv_full_screen": "True",
     "mpv_fs_screen": "0",
     "mpv_socket": "/tmp/mpv-socket"
